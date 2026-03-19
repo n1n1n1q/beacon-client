@@ -1,0 +1,39 @@
+services:
+  api-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python scripts/run_server.py
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app/src
+
+  tcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python scripts/run_tcp_server.py
+    ports:
+      - "9000:9000"
+    environment:
+      - PYTHONPATH=/app/src
+      - SERVER_TCP_PORT=9000
+
+  beacon-client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python scripts/run_client.py
+    depends_on:
+      - api-server
+      - tcp-server
+    environment:
+      - PYTHONPATH=/app/src
+      - CLIENT_ID=beacon-client-01
+      - BEACON_INTERVAL_HOURS=0.001
+      - SERVER_HTTP_BASE=http://api-server:8000
+      - SERVER_WS_BASE=ws://api-server:8000
+      - SERVER_TCP_HOST=tcp-server
+      - SERVER_TCP_PORT=9000
+      - ENABLED_CHANNELS=HTTP,TCP,HTTP2,HTTP3,DNS,DOH,ICMP,FTP,IMAP,MAPI,SMB,LDAP
