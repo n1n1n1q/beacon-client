@@ -20,20 +20,98 @@ services:
       - PYTHONPATH=/app/src
       - SERVER_TCP_PORT=9000
 
+  http2-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python scripts/run_http2_server.py
+    ports:
+      - "8443:8443"
+    environment:
+      - PYTHONPATH=/app/src
+      - SERVER_HTTP2_PORT=8443
+
+  http3-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python scripts/run_http3_server.py
+    ports:
+      - "4433:4433/udp"
+    environment:
+      - PYTHONPATH=/app/src
+      - SERVER_HTTP3_PORT=4433
+
+  dns-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python scripts/run_dns_server.py
+    ports:
+      - "5353:5353/udp"
+    environment:
+      - PYTHONPATH=/app/src
+      - SERVER_DNS_PORT=5353
+      - DNS_ZONE=alive.beacon.local
+
+  icmp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python scripts/run_icmp_server.py
+    cap_add:
+      - NET_RAW
+    sysctls:
+      - net.ipv4.icmp_echo_ignore_all=1
+    environment:
+      - PYTHONPATH=/app/src
+
+  ftp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python scripts/run_ftp_server.py
+    ports:
+      - "2121:2121"
+    environment:
+      - PYTHONPATH=/app/src
+      - SERVER_FTP_PORT=2121
+      - FTP_USER=beacon
+      - FTP_PASSWORD=beacon
+
   beacon-client:
     build:
       context: .
       dockerfile: Dockerfile
     command: python scripts/run_client.py
+    cap_add:
+      - NET_RAW
     depends_on:
       - api-server
       - tcp-server
+      - http2-server
+      - http3-server
+      - dns-server
+      - icmp-server
+      - ftp-server
     environment:
       - PYTHONPATH=/app/src
       - CLIENT_ID=beacon-client-01
-      - BEACON_INTERVAL_HOURS=0.001
+      - BEACON_INTERVAL_HOURS=0.005
       - SERVER_HTTP_BASE=http://api-server:8000
       - SERVER_WS_BASE=ws://api-server:8000
       - SERVER_TCP_HOST=tcp-server
       - SERVER_TCP_PORT=9000
-      - ENABLED_CHANNELS=HTTP,TCP,HTTP2,HTTP3,DNS,DOH,ICMP,FTP,IMAP,MAPI,SMB,LDAP
+      - SERVER_HTTP2_HOST=http2-server
+      - SERVER_HTTP2_PORT=8443
+      - SERVER_HTTP3_HOST=http3-server
+      - SERVER_HTTP3_PORT=4433
+      - SERVER_DNS_HOST=dns-server
+      - SERVER_DNS_PORT=5353
+      - DNS_ZONE=alive.beacon.local
+      - SERVER_ICMP_HOST=icmp-server
+      - SERVER_FTP_HOST=ftp-server
+      - SERVER_FTP_PORT=2121
+      - FTP_USER=beacon
+      - FTP_PASSWORD=beacon
+      - ENABLED_CHANNELS=HTTP,TCP,HTTP2,HTTP3,DNS,ICMP,FTP

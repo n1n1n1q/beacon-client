@@ -20,7 +20,24 @@ class Settings(BaseSettings):
     server_tcp_host: str = Field(default="localhost")
     server_tcp_port: int = Field(default=9000)
 
-    enabled_channels: str = Field(default="HTTP,TCP")
+    server_http2_host: str = Field(default="localhost")
+    server_http2_port: int = Field(default=8443)
+
+    server_http3_host: str = Field(default="localhost")
+    server_http3_port: int = Field(default=4433)
+
+    server_dns_host: str = Field(default="127.0.0.1")
+    server_dns_port: int = Field(default=5353)
+    dns_zone: str = Field(default="alive.beacon.local")
+
+    server_icmp_host: str = Field(default="127.0.0.1")
+
+    server_ftp_host: str = Field(default="localhost")
+    server_ftp_port: int = Field(default=2121)
+    ftp_user: str = Field(default="beacon")
+    ftp_password: str = Field(default="beacon")
+
+    enabled_channels: str = Field(default="HTTP,TCP,HTTP2,HTTP3,DNS,ICMP,FTP")
 
     @cached_property
     def enabled_channel_names(self) -> list[ChannelName]:
