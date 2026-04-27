@@ -10,14 +10,25 @@ class BeaconWebSocketClient:
     def __init__(self, ws_base_url: str) -> None:
         self._ws_base_url = ws_base_url.rstrip("/")
 
-    async def run_session(self, websocket_path: str, client_id: str, timeout_seconds: float = 30.0) -> None:
+    async def run_session(
+        self,
+        websocket_path: str,
+        client_id: str,
+        timeout_seconds: float = 30.0,
+    ) -> None:
         ws_url = f"{self._ws_base_url}{websocket_path}"
+        print(f"[WS] Connecting to {ws_url}")
 
-        async with websockets.connect(ws_url, ping_interval=20, ping_timeout=20) as websocket:
-            await websocket.send(json.dumps({"type": "hello", "client_id": client_id}))
+        try:
+            async with websockets.connect(ws_url, ping_interval=20, ping_timeout=20) as websocket:
+                await websocket.send(json.dumps({"type": "hello", "client_id": client_id}))
 
-            try:
-                reply = await asyncio.wait_for(websocket.recv(), timeout=timeout_seconds)
-                print(f"[WS] Received: {reply}")
-            except asyncio.TimeoutError:
-                print("[WS] Timeout waiting for server response")
+                while True:
+                    try:
+                        reply = await asyncio.wait_for(websocket.recv(), timeout=timeout_seconds)
+                    except asyncio.TimeoutError:
+                        print("[WS] Idle timeout — closing session")
+                        break
+                    print(f"[WS] Received: {reply}")
+        except websockets.WebSocketException as exc:
+            print(f"[WS] Connection closed: {exc}")

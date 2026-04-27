@@ -18,7 +18,10 @@ class BeaconRunner:
         interval_seconds = self._settings.beacon_interval_hours * 3600
 
         while True:
-            await self.run_once()
+            try:
+                await self.run_once()
+            except Exception as exc:
+                print(f"[BEACON] Iteration failed: {exc!r}")
             await asyncio.sleep(interval_seconds)
 
     async def run_once(self) -> None:
@@ -27,11 +30,19 @@ class BeaconRunner:
 
         print(f"[BEACON] Sending via {channel.name.value}")
 
-        response = await channel.send_alive(payload)
+        try:
+            response = await channel.send_alive(payload)
+        except Exception as exc:
+            print(f"[BEACON] Channel {channel.name.value} raised: {exc!r}")
+            return
+
         print(f"[BEACON] Response {response.status_code}: {response.detail}")
 
         if response.status_code == 201 and response.websocket_path:
-            await self._ws_client.run_session(
-                websocket_path=response.websocket_path,
-                client_id=self._settings.client_id,
-            )
+            try:
+                await self._ws_client.run_session(
+                    websocket_path=response.websocket_path,
+                    client_id=self._settings.client_id,
+                )
+            except Exception as exc:
+                print(f"[BEACON] WebSocket session error: {exc!r}")
