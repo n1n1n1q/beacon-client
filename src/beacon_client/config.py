@@ -30,12 +30,32 @@ class Settings(BaseSettings):
     server_dns_port: int = Field(default=5354)
     dns_zone: str = Field(default="alive.beacon.local")
 
+    server_doh_host: str = Field(default="127.0.0.1")
+    server_doh_port: int = Field(default=8043)
+
     server_icmp_host: str = Field(default="127.0.0.1")
 
     server_ftp_host: str = Field(default="localhost")
     server_ftp_port: int = Field(default=2121)
     ftp_user: str = Field(default="beacon")
     ftp_password: str = Field(default="beacon")
+
+    server_imap_host: str = Field(default="localhost")
+    server_imap_port: int = Field(default=1143)
+    imap_user: str = Field(default="beacon")
+    imap_password: str = Field(default="beacon")
+
+    server_smb_host: str = Field(default="localhost")
+    server_smb_port: int = Field(default=1445)
+    smb_user: str = Field(default="beacon")
+    smb_password: str = Field(default="beacon")
+    smb_share: str = Field(default="BEACON")
+
+    server_ldap_host: str = Field(default="localhost")
+    server_ldap_port: int = Field(default=1389)
+    ldap_user: str = Field(default="beacon")
+    ldap_password: str = Field(default="beacon")
+    ldap_base_dn: str = Field(default="dc=beacon,dc=local")
 
     enabled_channels: str = Field(default="HTTP,TCP,HTTP2,HTTP3,DNS,ICMP,FTP")
 

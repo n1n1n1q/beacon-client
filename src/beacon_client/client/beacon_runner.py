@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import traceback
 
 from beacon_client.channels.registry import ChannelRegistry
 from beacon_client.client.websocket_client import BeaconWebSocketClient
@@ -34,6 +35,7 @@ class BeaconRunner:
             response = await channel.send_alive(payload)
         except Exception as exc:
             print(f"[BEACON] Channel {channel.name.value} raised: {exc!r}")
+            traceback.print_exc()
             return
 
         print(f"[BEACON] Response {response.status_code}: {response.detail}")

@@ -54,6 +54,18 @@ services:
       - SERVER_DNS_PORT=5354
       - DNS_ZONE=alive.beacon.local
 
+  doh-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python scripts/run_doh_server.py
+    ports:
+      - "8043:8043"
+    environment:
+      - PYTHONPATH=/app/src
+      - SERVER_DOH_PORT=8043
+      - DNS_ZONE=alive.beacon.local
+
   icmp-server:
     build:
       context: .
@@ -79,6 +91,47 @@ services:
       - FTP_USER=beacon
       - FTP_PASSWORD=beacon
 
+  imap-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python scripts/run_imap_server.py
+    ports:
+      - "1143:1143"
+    environment:
+      - PYTHONPATH=/app/src
+      - SERVER_IMAP_PORT=1143
+      - IMAP_USER=beacon
+      - IMAP_PASSWORD=beacon
+
+  smb-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python scripts/run_smb_server.py
+    ports:
+      - "1445:1445"
+    environment:
+      - PYTHONPATH=/app/src
+      - SERVER_SMB_PORT=1445
+      - SMB_USER=beacon
+      - SMB_PASSWORD=beacon
+      - SMB_SHARE=BEACON
+
+  ldap-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python scripts/run_ldap_server.py
+    ports:
+      - "1389:1389"
+    environment:
+      - PYTHONPATH=/app/src
+      - SERVER_LDAP_PORT=1389
+      - LDAP_USER=beacon
+      - LDAP_PASSWORD=beacon
+      - LDAP_BASE_DN=dc=beacon,dc=local
+
   beacon-client:
     build:
       context: .
@@ -92,8 +145,12 @@ services:
       - http2-server
       - http3-server
       - dns-server
+      - doh-server
       - icmp-server
       - ftp-server
+      - imap-server
+      - smb-server
+      - ldap-server
     environment:
       - PYTHONPATH=/app/src
       - CLIENT_ID=beacon-client-01
@@ -109,9 +166,25 @@ services:
       - SERVER_DNS_HOST=dns-server
       - SERVER_DNS_PORT=5354
       - DNS_ZONE=alive.beacon.local
+      - SERVER_DOH_HOST=doh-server
+      - SERVER_DOH_PORT=8043
       - SERVER_ICMP_HOST=icmp-server
       - SERVER_FTP_HOST=ftp-server
       - SERVER_FTP_PORT=2121
       - FTP_USER=beacon
       - FTP_PASSWORD=beacon
-      - ENABLED_CHANNELS=HTTP,TCP,HTTP2,HTTP3,DNS,ICMP,FTP
+      - SERVER_IMAP_HOST=imap-server
+      - SERVER_IMAP_PORT=1143
+      - IMAP_USER=beacon
+      - IMAP_PASSWORD=beacon
+      - SERVER_SMB_HOST=smb-server
+      - SERVER_SMB_PORT=1445
+      - SMB_USER=beacon
+      - SMB_PASSWORD=beacon
+      - SMB_SHARE=BEACON
+      - SERVER_LDAP_HOST=ldap-server
+      - SERVER_LDAP_PORT=1389
+      - LDAP_USER=beacon
+      - LDAP_PASSWORD=beacon
+      - LDAP_BASE_DN=dc=beacon,dc=local
+      - ENABLED_CHANNELS=HTTP,TCP,HTTP2,HTTP3,DNS,ICMP,FTP,DOH,IMAP,SMB,LDAP
