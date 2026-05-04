@@ -66,7 +66,7 @@ class _DnsBeaconProtocol(asyncio.DatagramProtocol):
         return labels[0] if labels else "unknown"
 
 
-async def run_dns_server(host: str = "0.0.0.0", port: int = 5353, zone: str = "alive.beacon.local") -> None:
+async def run_dns_server(host: str = "0.0.0.0", port: int = 5354, zone: str = "alive.beacon.local") -> None:
     loop = asyncio.get_running_loop()
 
     transport, _protocol = await loop.create_datagram_endpoint(

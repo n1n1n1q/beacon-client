@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     server_http3_port: int = Field(default=4433)
 
     server_dns_host: str = Field(default="127.0.0.1")
-    server_dns_port: int = Field(default=5353)
+    server_dns_port: int = Field(default=5354)
     dns_zone: str = Field(default="alive.beacon.local")
 
     server_icmp_host: str = Field(default="127.0.0.1")

@@ -48,10 +48,10 @@ services:
       dockerfile: Dockerfile
     command: python scripts/run_dns_server.py
     ports:
-      - "5353:5353/udp"
+      - "5354:5354/udp"
     environment:
       - PYTHONPATH=/app/src
-      - SERVER_DNS_PORT=5353
+      - SERVER_DNS_PORT=5354
       - DNS_ZONE=alive.beacon.local
 
   icmp-server:
@@ -97,7 +97,7 @@ services:
     environment:
       - PYTHONPATH=/app/src
       - CLIENT_ID=beacon-client-01
-      - BEACON_INTERVAL_HOURS=0.005
+      - BEACON_INTERVAL_HOURS=0.001
       - SERVER_HTTP_BASE=http://api-server:8000
       - SERVER_WS_BASE=ws://api-server:8000
       - SERVER_TCP_HOST=tcp-server
@@ -107,7 +107,7 @@ services:
       - SERVER_HTTP3_HOST=http3-server
       - SERVER_HTTP3_PORT=4433
       - SERVER_DNS_HOST=dns-server
-      - SERVER_DNS_PORT=5353
+      - SERVER_DNS_PORT=5354
       - DNS_ZONE=alive.beacon.local
       - SERVER_ICMP_HOST=icmp-server
       - SERVER_FTP_HOST=ftp-server

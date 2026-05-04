@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import asyncio
+import socket
 
 import dns.asyncresolver
 import dns.exception
@@ -21,8 +23,17 @@ class DnsChannel(BeaconChannel):
         return ChannelName.DNS
 
     async def send_alive(self, payload: BeaconMessage) -> BeaconResponse:
+
+        loop = asyncio.get_running_loop()
+        
+        try:
+            addr_info = await loop.getaddrinfo(self._host, self._port, family=socket.AF_INET)
+            nameserver_ip = addr_info[0][4][0]
+        except Exception as exc:
+            return BeaconResponse(status_code=500, detail=f"Failed to resolve nameserver {self._host}: {exc}")
+
         resolver = dns.asyncresolver.Resolver(configure=False)
-        resolver.nameservers = [self._host]
+        resolver.nameservers = [nameserver_ip]
         resolver.port = self._port
         resolver.lifetime = 15.0
         resolver.timeout = 15.0
