@@ -11,6 +11,7 @@ from beacon_client.channels.http_channel import HttpChannel
 from beacon_client.channels.icmp_channel import IcmpChannel
 from beacon_client.channels.imap_channel import ImapChannel
 from beacon_client.channels.ldap_channel import LdapChannel
+from beacon_client.channels.mapi_channel import MapiChannel
 from beacon_client.channels.smb_channel import SmbChannel
 from beacon_client.channels.stub_channel import StubChannel
 from beacon_client.channels.tcp_channel import TcpChannel
@@ -63,7 +64,13 @@ class ChannelRegistry:
                 host=settings.server_doh_host,
                 port=settings.server_doh_port,
                 zone=settings.dns_zone
-            )
+            ),
+            ChannelName.MAPI: MapiChannel(
+                host=settings.server_mapi_host,
+                port=settings.server_mapi_port,
+                user=settings.mapi_user,
+                password=settings.mapi_password,
+            ),
         }
 
         for channel_name in ChannelName:

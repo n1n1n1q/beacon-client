@@ -57,6 +57,11 @@ class Settings(BaseSettings):
     ldap_password: str = Field(default="beacon")
     ldap_base_dn: str = Field(default="dc=beacon,dc=local")
 
+    server_mapi_host: str = Field(default="localhost")
+    server_mapi_port: int = Field(default=8007)
+    mapi_user: str = Field(default="beacon")
+    mapi_password: str = Field(default="beacon")
+
     enabled_channels: str = Field(default="HTTP,TCP,HTTP2,HTTP3,DNS,ICMP,FTP")
 
     @cached_property

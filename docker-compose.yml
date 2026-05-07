@@ -132,6 +132,19 @@ services:
       - LDAP_PASSWORD=beacon
       - LDAP_BASE_DN=dc=beacon,dc=local
 
+  mapi-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python scripts/run_mapi_server.py
+    ports:
+      - "8007:8007"
+    environment:
+      - PYTHONPATH=/app/src
+      - SERVER_MAPI_PORT=8007
+      - MAPI_USER=beacon
+      - MAPI_PASSWORD=beacon
+
   beacon-client:
     build:
       context: .
@@ -151,6 +164,7 @@ services:
       - imap-server
       - smb-server
       - ldap-server
+      - mapi-server
     environment:
       - PYTHONPATH=/app/src
       - CLIENT_ID=beacon-client-01
@@ -187,4 +201,8 @@ services:
       - LDAP_USER=beacon
       - LDAP_PASSWORD=beacon
       - LDAP_BASE_DN=dc=beacon,dc=local
-      - ENABLED_CHANNELS=HTTP,TCP,HTTP2,HTTP3,DNS,ICMP,FTP,DOH,IMAP,SMB,LDAP
+      - SERVER_MAPI_HOST=mapi-server
+      - SERVER_MAPI_PORT=8007
+      - MAPI_USER=beacon
+      - MAPI_PASSWORD=beacon
+      - ENABLED_CHANNELS=HTTP,TCP,HTTP2,HTTP3,DNS,ICMP,FTP,DOH,IMAP,SMB,LDAP,MAPI
