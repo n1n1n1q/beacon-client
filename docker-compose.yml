@@ -20,6 +20,17 @@ services:
       - PYTHONPATH=/app/src
       - SERVER_TCP_PORT=9000
 
+  http-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python scripts/run_http_server.py
+    ports:
+      - "8080:8080"
+    environment:
+      - PYTHONPATH=/app/src
+      - SERVER_HTTP1_PORT=8080
+
   http2-server:
     build:
       context: .
@@ -155,6 +166,7 @@ services:
     depends_on:
       - api-server
       - tcp-server
+      - http-server
       - http2-server
       - http3-server
       - dns-server
@@ -173,6 +185,8 @@ services:
       - SERVER_WS_BASE=ws://api-server:8000
       - SERVER_TCP_HOST=tcp-server
       - SERVER_TCP_PORT=9000
+      - SERVER_HTTP1_HOST=http-server
+      - SERVER_HTTP1_PORT=8080
       - SERVER_HTTP2_HOST=http2-server
       - SERVER_HTTP2_PORT=8443
       - SERVER_HTTP3_HOST=http3-server
@@ -205,4 +219,4 @@ services:
       - SERVER_MAPI_PORT=8007
       - MAPI_USER=beacon
       - MAPI_PASSWORD=beacon
-      - ENABLED_CHANNELS=HTTP,TCP,HTTP2,HTTP3,DNS,ICMP,FTP,DOH,IMAP,SMB,LDAP,MAPI
+      - ENABLED_CHANNELS=HTTP,TCP,HTTP1,HTTP2,HTTP3,DNS,ICMP,FTP,DOH,IMAP,SMB,LDAP,MAPI

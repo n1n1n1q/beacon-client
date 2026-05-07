@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     server_tcp_host: str = Field(default="localhost")
     server_tcp_port: int = Field(default=9000)
 
+    server_http1_host: str = Field(default="localhost")
+    server_http1_port: int = Field(default=8080)
+
     server_http2_host: str = Field(default="localhost")
     server_http2_port: int = Field(default=8443)
 
