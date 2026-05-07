@@ -8,7 +8,7 @@ from beacon_client.channels.ftp_channel import FtpChannel
 from beacon_client.channels.http2_channel import Http2Channel
 from beacon_client.channels.http3_channel import Http3Channel
 from beacon_client.channels.http_channel import HttpChannel
-from beacon_client.channels.icmp_channel import IcmpChannel
+from beacon_client.channels.icmp_channel import Icmpv6Channel
 from beacon_client.channels.imap_channel import ImapChannel
 from beacon_client.channels.ldap_channel import LdapChannel
 from beacon_client.channels.mapi_channel import MapiChannel
@@ -33,7 +33,7 @@ class ChannelRegistry:
                 port=settings.server_dns_port,
                 zone=settings.dns_zone,
             ),
-            ChannelName.ICMP: IcmpChannel(host=settings.server_icmp_host),
+            ChannelName.ICMP: Icmpv6Channel(host=settings.server_icmp_host),
             ChannelName.FTP: FtpChannel(
                 host=settings.server_ftp_host,
                 port=settings.server_ftp_port,
